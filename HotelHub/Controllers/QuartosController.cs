@@ -44,10 +44,15 @@ namespace HotelHub.Controllers
                 if (hotel == null) {
                     return NotFound("Hotel não encontrado.");
                 }
+                var listaQuartos = new List<Quarto>();
+                var Quartos = hotel.Quartos.ToList();
 
-                var quartosHotel = hotel.Quartos.ToList();
+                foreach(var quarto in Quartos) {
+                    var quartoC = _context.Quarto.Include(q => q.FotosQuarto).FirstOrDefault(q => q.QuartoId == quarto.QuartoId);
+                    listaQuartos.Add(quartoC);
+                }
 
-                return quartosHotel;
+                return listaQuartos;
 
             } catch (Exception ex) {
                 return StatusCode(500, $"Erro ao buscar os quartos do hotel: {ex.Message}");
