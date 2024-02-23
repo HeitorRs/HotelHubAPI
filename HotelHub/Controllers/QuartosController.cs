@@ -39,15 +39,28 @@ namespace HotelHub.Controllers
         public async Task<ActionResult<List<Quarto>>> GetQuarto(int id)
         {
             try {
-                Hotel hotel = _context.Hotel.Include(h => h.Quartos).FirstOrDefault(h => h.HotelId == id);
+                var quartos = _context.Quarto.Include(q => q.FotosQuarto).Where(q => q.Hotel.HotelId== id).ToList(); 
 
-                if (hotel == null) {
+                if (quartos == null) {
                     return NotFound("Hotel não encontrado.");
                 }
 
-                var quartosHotel = hotel.Quartos.ToList();
+                return quartos;
 
-                return quartosHotel;
+            } catch (Exception ex) {
+                return StatusCode(500, $"Erro ao buscar os quartos do hotel: {ex.Message}");
+            }
+        }
+        [HttpGet("quarto/{id}")]
+        public async Task<ActionResult<Quarto>> DetalheQuarto(int id) {
+            try {
+                var quarto = _context.Quarto.Include(q => q.FotosQuarto).FirstOrDefault(q => q.QuartoId == id);
+
+                if (quarto == null) {
+                    return NotFound("Quarto não encontrado.");
+                }
+
+                return quarto;
 
             } catch (Exception ex) {
                 return StatusCode(500, $"Erro ao buscar os quartos do hotel: {ex.Message}");
