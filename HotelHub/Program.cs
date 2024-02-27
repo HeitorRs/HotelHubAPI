@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Cors;
+using HotelHub.Services;
 
 namespace HotelHub {
     public class Program {
@@ -13,6 +14,8 @@ namespace HotelHub {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<HotelHubContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("HotelHubContext") ?? throw new InvalidOperationException("Connection string 'HotelHubContext' not found.")));
+
+            builder.Services.AddScoped<HotelService>();
 
             builder.Services.AddCors(options => {
                 options.AddPolicy("AllowReactApp",

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HotelHub.Data;
 using HotelHub.Models;
+using HotelHub.Services;
 
 namespace HotelHub.Controllers
 {
@@ -14,42 +15,38 @@ namespace HotelHub.Controllers
     [ApiController]
     public class HotelsController : ControllerBase
     {
-        private readonly HotelHubContext _context;
+        private readonly HotelService _hotelService;
 
-        public HotelsController(HotelHubContext context)
-        {
-            _context = context;
+        public HotelsController(HotelService hotelService) {
+            _hotelService = hotelService;
         }
 
         // GET: api/Hotels
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Hotel>>> GetHotel()
+        public IActionResult GetHoteis()
         {
-          if (_context.Hotel == null)
-          {
-              return NotFound();
-          }
-            return await _context.Hotel.Include(h => h.FotosHotel).ToListAsync();
+            try {
+                var result = _hotelService.GetAllHotels();
+                return Ok(result);
+            }catch(Exception ex) {
+                return BadRequest(ex.Message);
+            }
+            
         }
-
+        
         // GET: api/Hotels/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Hotel>> GetHotel(int id)
+        public IActionResult GetHotel(int id)
         {
-          if (_context.Hotel == null)
-          {
-              return NotFound();
-          }
-            var hotel = _context.Hotel.Include(h => h.FotosHotel).FirstOrDefault(h => h.HotelId == id);
-
-            if (hotel == null)
-            {
-                return NotFound();
+            try {
+                var result = _hotelService.GetHotelPerId(id);
+                return Ok(result);
+            } catch (Exception ex) {
+                return BadRequest(ex.Message);
             }
-
-            return hotel;
         }
 
+        /*
         // PUT: api/Hotels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -138,6 +135,6 @@ namespace HotelHub.Controllers
         private bool HotelExists(int id)
         {
             return (_context.Hotel?.Any(e => e.HotelId == id)).GetValueOrDefault();
-        }
+        }*/
     }
 }
