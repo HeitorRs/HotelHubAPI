@@ -7,7 +7,7 @@ using Moq;
 
 namespace APITeste {
     [TestClass]
-    public class UnitTest1 {
+    public class HotelsControllerTest {
 
         [TestMethod]
         public void TestarPegarHoteis() {

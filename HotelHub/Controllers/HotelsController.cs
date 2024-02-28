@@ -16,9 +16,12 @@ namespace HotelHub.Controllers
     public class HotelsController : ControllerBase
     {
         private readonly HotelService _hotelService;
+        private readonly HotelHubContext _context;
 
-        public HotelsController(HotelService hotelService) {
+
+        public HotelsController(HotelService hotelService, HotelHubContext context) {
             _hotelService = hotelService;
+            _context = context;
         }
 
         // GET: api/Hotels
@@ -77,11 +80,11 @@ namespace HotelHub.Controllers
 
             return NoContent();
         }
-
+        */
         // POST: api/Hotels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Hotel>> PostHotel(string nome, string descricao, string cidade, List<string> fotos, int admhotelId)
+        public async Task<ActionResult<Hotel>> PostHotel(string nome, string descricao, string cidade,string fotos, int admhotelId)
         {
             try {
                 AdmHotel admhotel = _context.AdmHotel.Find(admhotelId);
@@ -89,8 +92,11 @@ namespace HotelHub.Controllers
                 if (admhotel == null) {
                     return NotFound("Administrador não encontrado.");
                 }
-                var fotoshotel = new List<FotoHotel> {};
-                foreach (string foto in fotos) {
+
+                var fotosList = fotos.Split(',').ToList();
+
+                var fotoshotel = new List<FotoHotel>();
+                foreach (string foto in fotosList) {
                     var newfoto = new FotoHotel { NomeArquivo = foto };
                     fotoshotel.Add(newfoto);
                 }
@@ -106,12 +112,11 @@ namespace HotelHub.Controllers
                 _context.Hotel.Add(hotel);
                 await _context.SaveChangesAsync();
                 return Ok("Hotel cadastrado com sucesso!");
-
             } catch (Exception ex) {
                 return StatusCode(500, $"Erro ao cadastrar o hotel: {ex.Message}");
             }
         }
-
+        /*
         // DELETE: api/Hotels/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHotel(int id)
