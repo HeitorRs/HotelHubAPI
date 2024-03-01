@@ -87,52 +87,23 @@ namespace HotelHub.Controllers
         public async Task<ActionResult<Hotel>> PostHotel(string nome, string descricao, string cidade,string fotos, int admhotelId)
         {
             try {
-                AdmHotel admhotel = _context.AdmHotel.Find(admhotelId);
-
-                if (admhotel == null) {
-                    return NotFound("Administrador não encontrado.");
-                }
-
-                var fotosList = fotos.Split(',').ToList();
-
-                var fotoshotel = new List<FotoHotel>();
-                foreach (string foto in fotosList) {
-                    var newfoto = new FotoHotel { NomeArquivo = foto };
-                    fotoshotel.Add(newfoto);
-                }
-
-                var hotel = new Hotel {
-                    Nome = nome,
-                    Descricao = descricao,
-                    Cidade = cidade,
-                    FotosHotel = fotoshotel,
-                    Administrador = admhotel
-                };
-
-                _context.Hotel.Add(hotel);
-                await _context.SaveChangesAsync();
-                return Ok("Hotel cadastrado com sucesso!");
+                await _hotelService.PostHotel(nome, descricao, cidade, fotos, admhotelId);
+                return Ok();
             } catch (Exception ex) {
                 return StatusCode(500, $"Erro ao cadastrar o hotel: {ex.Message}");
             }
         }
-        /*
+        
         // DELETE: api/Hotels/5
-        [HttpDelete("{id}")]
+        [HttpDelete("/api/Hotels/delete/{id}")]
         public async Task<IActionResult> DeleteHotel(int id)
         {
             if (_context.Hotel == null)
             {
                 return NotFound();
             }
-            var hotel = await _context.Hotel.FindAsync(id);
-            if (hotel == null)
-            {
-                return NotFound();
-            }
 
-            _context.Hotel.Remove(hotel);
-            await _context.SaveChangesAsync();
+            await _hotelService.DeleteHotel(id);
 
             return NoContent();
         }
@@ -140,6 +111,6 @@ namespace HotelHub.Controllers
         private bool HotelExists(int id)
         {
             return (_context.Hotel?.Any(e => e.HotelId == id)).GetValueOrDefault();
-        }*/
+        }
     }
 }
