@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using HotelHub.Data;
 using HotelHub.Models;
 using HotelHub.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HotelHub.Controllers
 {
@@ -36,8 +37,9 @@ namespace HotelHub.Controllers
             }
             
         }
-        
+
         // GET: api/Hotels/5
+        [Authorize]
         [HttpGet("{id}")]
         public IActionResult GetHotel(int id)
         {
@@ -49,7 +51,7 @@ namespace HotelHub.Controllers
             }
         }
 
-        /*
+
         // PUT: api/Hotels/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -80,7 +82,7 @@ namespace HotelHub.Controllers
 
             return NoContent();
         }
-        */
+     
         // POST: api/Hotels
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

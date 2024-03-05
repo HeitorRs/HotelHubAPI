@@ -9,6 +9,10 @@ using HotelHub.Data;
 using HotelHub.Models;
 using HotelHub.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace HotelHub.Controllers
 {
@@ -130,5 +134,47 @@ namespace HotelHub.Controllers
         {
             return (_context.Hospede?.Any(e => e.HospedeId == id)).GetValueOrDefault();
         }
+
+        [HttpPost("Login")]
+        public IActionResult Login([FromBody] LoginModel login) {
+
+            var hospede = _context.Hospede.FirstOrDefault(h => h.Email == login.Email);
+            
+            if (hospede == null) {
+                // E-mail não encontrado
+                return Unauthorized(new { message = "E-mail não encontrado." });
+            }
+
+            if (login.Senha != hospede.Senha) {
+                // Senha incorreta
+                return Unauthorized(new { message = "Senha incorreta." });
+            }
+            
+            var token = GenerateJwtToken(login.Email);
+            return Ok(new { token, hospede.HospedeId });
+        }
+
+        // Este método gera um token JWT com base no email do hospede.
+        private string GenerateJwtToken(string email) {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(Key.Secret);
+
+            var tokenDescriptor = new SecurityTokenDescriptor {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Email, email),
+                }),
+                Expires = DateTime.UtcNow.AddDays(7), // Defina o tempo de expiração do token conforme necessário
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
+    }
+
+    public class LoginModel {
+        public string Email { get; set; }
+        public string Senha { get; set; }
     }
 }
