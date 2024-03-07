@@ -38,7 +38,7 @@ namespace HotelHub.Controllers
             
         }
 
-        // GET: api/Hotels/5
+        // GET: api/Hotels/5 [Authorize(Roles ="admHotel")]
         [Authorize]
         [HttpGet("{id}")]
         public IActionResult GetHotel(int id)

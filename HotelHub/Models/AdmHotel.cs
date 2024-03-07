@@ -17,6 +17,7 @@ namespace HotelHub.Models {
         [Required(ErrorMessage = "A senha é obrigatória")]
         public string Senha { get; set; }
 
+        public string Tipo { get; set; } = "AdmHotel";
 
         public ICollection<Hotel> HoteisGerenciados { get; set; }
     }
