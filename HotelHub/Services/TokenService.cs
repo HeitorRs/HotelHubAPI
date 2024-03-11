@@ -7,24 +7,24 @@ using System.Text;
 
 namespace HotelHub.Services {
     public class TokenService {
-        public static object GenerateToken(Hospede hospede) {
-
+        public string GenerateJwtToken(int id, string tipo) {
+            var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(Key.Secret);
-            var tokenConfig = new SecurityTokenDescriptor {
-                Subject = new System.Security.Claims.ClaimsIdentity(new Claim[] {
-                    new Claim("hospedeId", hospede.HospedeId.ToString()),
+
+            var tokenDescriptor = new SecurityTokenDescriptor {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Role, tipo),
+                    new Claim(ClaimTypes.NameIdentifier, id.ToString()),
                 }),
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var token = tokenHandler.CreateToken(tokenConfig);
-            var tokenString = tokenHandler.WriteToken(token);
-
-            return new {
-                Token = tokenString,
-            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }
+    
+

@@ -1,124 +1,134 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using HotelHub.Data;
-using HotelHub.Models;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Threading.Tasks;
+//using Microsoft.AspNetCore.Http;
+//using Microsoft.AspNetCore.Mvc;
+//using Microsoft.EntityFrameworkCore;
+//using HotelHub.Data;
+//using HotelHub.Models;
+//using HotelHub.Services;
 
-namespace HotelHub.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AdmHotelsController : ControllerBase
-    {
-        private readonly HotelHubContext _context;
+//namespace HotelHub.Controllers
+//{
+//    [Route("api/[controller]")]
+//    [ApiController]
+//    public class AdmHotelsController : ControllerBase
+//    {
+//        private readonly TokenService _tokenService;
+//        private readonly HotelHubContext _context;
 
-        public AdmHotelsController(HotelHubContext context)
-        {
-            _context = context;
-        }
+//        public AdmHotelsController(HotelHubContext context, TokenService tokenService) {
+//            _context = context;
+//            _tokenService = tokenService;
+//        }
 
-        // GET: api/AdmHotels
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<AdmHotel>>> GetAdmHotel()
-        {
-          if (_context.AdmHotel == null)
-          {
-              return NotFound();
-          }
-            return await _context.AdmHotel.ToListAsync();
-        }
+//        // GET: api/AdmHotels
+//        [HttpGet]
+//        public async Task<ActionResult<IEnumerable<AdmHotel>>> GetAdmHotel()
+//        {
+//          if (_context.AdmHotel == null)
+//          {
+//              return NotFound();
+//          }
+//            return await _context.AdmHotel.ToListAsync();
+//        }
 
-        // GET: api/AdmHotels/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AdmHotel>> GetAdmHotel(int id)
-        {
-          if (_context.AdmHotel == null)
-          {
-              return NotFound();
-          }
-            var admHotel = await _context.AdmHotel.FindAsync(id);
+//        // GET: api/AdmHotels/5
+//        [HttpGet("{id}")]
+//        public async Task<ActionResult<AdmHotel>> GetAdmHotel(int id)
+//        {
+//          if (_context.AdmHotel == null)
+//          {
+//              return NotFound();
+//          }
+//            var admHotel = await _context.AdmHotel.FindAsync(id);
 
-            if (admHotel == null)
-            {
-                return NotFound();
-            }
+//            if (admHotel == null)
+//            {
+//                return NotFound();
+//            }
 
-            return admHotel;
-        }
+//            return admHotel;
+//        }
 
-        // PUT: api/AdmHotels/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAdmHotel(int id, AdmHotel admHotel)
-        {
-            if (id != admHotel.AdmHotelId)
-            {
-                return BadRequest();
-            }
+//        // PUT: api/AdmHotels/5
+//        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+//        [HttpPut("{id}")]
+//        public async Task<IActionResult> PutAdmHotel(int id, AdmHotel admHotel)
+//        {
+//            if (id != admHotel.AdmHotelId)
+//            {
+//                return BadRequest();
+//            }
 
-            _context.Entry(admHotel).State = EntityState.Modified;
+//            _context.Entry(admHotel).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AdmHotelExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+//            try
+//            {
+//                await _context.SaveChangesAsync();
+//            }
+//            catch (DbUpdateConcurrencyException)
+//            {
+//                if (!AdmHotelExists(id))
+//                {
+//                    return NotFound();
+//                }
+//                else
+//                {
+//                    throw;
+//                }
+//            }
 
-            return NoContent();
-        }
+//            return NoContent();
+//        }
 
-        // POST: api/AdmHotels
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<AdmHotel>> PostAdmHotel(AdmHotel admHotel)
-        {
-          if (_context.AdmHotel == null)
-          {
-              return Problem("Entity set 'HotelHubContext.AdmHotel'  is null.");
-          }
-            _context.AdmHotel.Add(admHotel);
-            await _context.SaveChangesAsync();
+//        // POST: api/AdmHotels
+//        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+//        [HttpPost]
+//        public async Task<ActionResult<AdmHotel>> PostAdmHotel(AdmHotel newadmHotel)
+//        {
+//            try {
+//                var admHotel = new AdmHotel {
+//                    Nome = newadmHotel.Nome,
+//                    Sobrenome = newadmHotel.Sobrenome,
+//                    Email = newadmHotel.Email,
+//                    Senha = newadmHotel.Senha
+//                };
 
-            return CreatedAtAction("GetAdmHotel", new { id = admHotel.AdmHotelId }, admHotel);
-        }
+//                _context.AdmHotel.Add(admHotel);
+//                await _context.SaveChangesAsync();
+//                var token = _tokenService.GenerateJwtToken(admHotel.AdmHotelId, admHotel.Tipo);
+//                return Ok(token);
 
-        // DELETE: api/AdmHotels/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAdmHotel(int id)
-        {
-            if (_context.AdmHotel == null)
-            {
-                return NotFound();
-            }
-            var admHotel = await _context.AdmHotel.FindAsync(id);
-            if (admHotel == null)
-            {
-                return NotFound();
-            }
+//            } catch (Exception ex) {
+//                return StatusCode(500, $"Erro ao cadastrar hospede: {ex.Message}");
+//            }
+//        }
 
-            _context.AdmHotel.Remove(admHotel);
-            await _context.SaveChangesAsync();
+//        // DELETE: api/AdmHotels/5
+//        [HttpDelete("{id}")]
+//        public async Task<IActionResult> DeleteAdmHotel(int id)
+//        {
+//            if (_context.AdmHotel == null)
+//            {
+//                return NotFound();
+//            }
+//            var admHotel = await _context.AdmHotel.FindAsync(id);
+//            if (admHotel == null)
+//            {
+//                return NotFound();
+//            }
 
-            return NoContent();
-        }
+//            _context.AdmHotel.Remove(admHotel);
+//            await _context.SaveChangesAsync();
 
-        private bool AdmHotelExists(int id)
-        {
-            return (_context.AdmHotel?.Any(e => e.AdmHotelId == id)).GetValueOrDefault();
-        }
-    }
-}
+//            return NoContent();
+//        }
+
+//        private bool AdmHotelExists(int id)
+//        {
+//            return (_context.AdmHotel?.Any(e => e.AdmHotelId == id)).GetValueOrDefault();
+//        }
+//    }
+//}

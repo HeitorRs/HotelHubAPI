@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Cors;
 using HotelHub.Services;
+using System.Text.Json;
 
 namespace HotelHub {
     public class Program {
@@ -15,7 +16,7 @@ namespace HotelHub {
             builder.Services.AddDbContext<HotelHubContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("HotelHubContext") ?? throw new InvalidOperationException("Connection string 'HotelHubContext' not found.")));
 
-            builder.Services.AddScoped<HotelService>();
+            builder.Services.AddScoped<TokenService>();
 
             builder.Services.AddCors(options => {
                 options.AddPolicy("AllowReactApp",
@@ -26,7 +27,12 @@ namespace HotelHub {
                     });
             });
             // Add services to the container.
-            builder.Services.AddControllers().AddJsonOptions(options => { options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;});
+            builder.Services.AddControllers().AddJsonOptions(options => 
+            { 
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.IgnoreNullValues = true;
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            });
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

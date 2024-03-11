@@ -1,4 +1,6 @@
 ﻿namespace HotelHub.Models {
-    public class TipoUsuario {
+    public enum TipoUsuario {
+        Hospede,
+        AdmHotel
     }
 }

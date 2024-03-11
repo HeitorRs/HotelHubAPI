@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelHub.Migrations
 {
     [DbContext(typeof(HotelHubContext))]
-    [Migration("20240306232205_RolesAddition")]
-    partial class RolesAddition
+    [Migration("20240311020939_Terceira")]
+    partial class Terceira
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,11 @@ namespace HotelHub.Migrations
 
             modelBuilder.Entity("HotelHub.Models.AdmHotel", b =>
                 {
-                    b.Property<int>("AdmHotelId")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AdmHotelId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -49,11 +49,10 @@ namespace HotelHub.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Tipo")
+                        .HasColumnType("int");
 
-                    b.HasKey("AdmHotelId");
+                    b.HasKey("UserId");
 
                     b.ToTable("AdmHotel");
                 });
@@ -66,7 +65,7 @@ namespace HotelHub.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ComentarioId"));
 
-                    b.Property<int?>("HospedeId")
+                    b.Property<int?>("HospedeUserId")
                         .HasColumnType("int");
 
                     b.Property<int?>("QuartoId")
@@ -77,14 +76,14 @@ namespace HotelHub.Migrations
 
                     b.HasKey("ComentarioId");
 
-                    b.HasIndex("HospedeId");
+                    b.HasIndex("HospedeUserId");
 
                     b.HasIndex("QuartoId");
 
                     b.ToTable("Comentario");
                 });
 
-            modelBuilder.Entity("HotelHub.Models.FotoHotel", b =>
+            modelBuilder.Entity("HotelHub.Models.Foto", b =>
                 {
                     b.Property<int>("FotoId")
                         .ValueGeneratedOnAdd()
@@ -92,49 +91,32 @@ namespace HotelHub.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FotoId"));
 
-                    b.Property<int>("HotelId")
+                    b.Property<int?>("HotelId")
                         .HasColumnType("int");
 
                     b.Property<string>("NomeArquivo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("QuartoId")
+                        .HasColumnType("int");
 
                     b.HasKey("FotoId");
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("FotoHotel");
-                });
-
-            modelBuilder.Entity("HotelHub.Models.FotoQuarto", b =>
-                {
-                    b.Property<int>("FotoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FotoId"));
-
-                    b.Property<string>("NomeArquivo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("QuartoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("FotoId");
-
                     b.HasIndex("QuartoId");
 
-                    b.ToTable("FotoQuarto");
+                    b.ToTable("Fotos");
                 });
 
             modelBuilder.Entity("HotelHub.Models.Hospede", b =>
                 {
-                    b.Property<int>("HospedeId")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HospedeId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -152,11 +134,10 @@ namespace HotelHub.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Tipo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Tipo")
+                        .HasColumnType("int");
 
-                    b.HasKey("HospedeId");
+                    b.HasKey("UserId");
 
                     b.ToTable("Hospede");
                 });
@@ -169,7 +150,7 @@ namespace HotelHub.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HotelId"));
 
-                    b.Property<int>("AdministradorAdmHotelId")
+                    b.Property<int>("AdministradorUserId")
                         .HasColumnType("int");
 
                     b.Property<string>("Cidade")
@@ -186,7 +167,7 @@ namespace HotelHub.Migrations
 
                     b.HasKey("HotelId");
 
-                    b.HasIndex("AdministradorAdmHotelId");
+                    b.HasIndex("AdministradorUserId");
 
                     b.ToTable("Hotel");
                 });
@@ -230,7 +211,7 @@ namespace HotelHub.Migrations
                     b.Property<DateTime>("DataSaida")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("HospedeId")
+                    b.Property<int>("HospedeUserId")
                         .HasColumnType("int");
 
                     b.Property<int>("HotelId")
@@ -245,7 +226,7 @@ namespace HotelHub.Migrations
 
                     b.HasKey("ReservaId");
 
-                    b.HasIndex("HospedeId");
+                    b.HasIndex("HospedeUserId");
 
                     b.HasIndex("HotelId");
 
@@ -258,7 +239,7 @@ namespace HotelHub.Migrations
                 {
                     b.HasOne("HotelHub.Models.Hospede", "Hospede")
                         .WithMany("Comentarios")
-                        .HasForeignKey("HospedeId");
+                        .HasForeignKey("HospedeUserId");
 
                     b.HasOne("HotelHub.Models.Quarto", "Quarto")
                         .WithMany("ComentariosQuarto")
@@ -269,33 +250,22 @@ namespace HotelHub.Migrations
                     b.Navigation("Quarto");
                 });
 
-            modelBuilder.Entity("HotelHub.Models.FotoHotel", b =>
+            modelBuilder.Entity("HotelHub.Models.Foto", b =>
                 {
-                    b.HasOne("HotelHub.Models.Hotel", "Hotel")
+                    b.HasOne("HotelHub.Models.Hotel", null)
                         .WithMany("FotosHotel")
-                        .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("HotelId");
 
-                    b.Navigation("Hotel");
-                });
-
-            modelBuilder.Entity("HotelHub.Models.FotoQuarto", b =>
-                {
-                    b.HasOne("HotelHub.Models.Quarto", "Quarto")
+                    b.HasOne("HotelHub.Models.Quarto", null)
                         .WithMany("FotosQuarto")
-                        .HasForeignKey("QuartoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Quarto");
+                        .HasForeignKey("QuartoId");
                 });
 
             modelBuilder.Entity("HotelHub.Models.Hotel", b =>
                 {
                     b.HasOne("HotelHub.Models.AdmHotel", "Administrador")
                         .WithMany("HoteisGerenciados")
-                        .HasForeignKey("AdministradorAdmHotelId")
+                        .HasForeignKey("AdministradorUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -317,20 +287,20 @@ namespace HotelHub.Migrations
                 {
                     b.HasOne("HotelHub.Models.Hospede", "Hospede")
                         .WithMany("Reservas")
-                        .HasForeignKey("HospedeId")
+                        .HasForeignKey("HospedeUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("HotelHub.Models.Hotel", "Hotel")
                         .WithMany("Reservas")
                         .HasForeignKey("HotelId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("HotelHub.Models.Quarto", "Quarto")
                         .WithMany("Reservas")
                         .HasForeignKey("QuartoId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Hospede");

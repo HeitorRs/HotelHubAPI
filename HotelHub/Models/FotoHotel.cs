@@ -1,11 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace HotelHub.Models {
-    public class FotoHotel {
-        public int FotoId { get; set; }
-        [Required]
-        public string NomeArquivo { get; set; }
-
+﻿namespace HotelHub.Models {
+    public class FotoHotel : Foto {
         public Hotel Hotel { get; set; }
     }
 }

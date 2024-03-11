@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HotelHub.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Terceira : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,32 +15,34 @@ namespace HotelHub.Migrations
                 name: "AdmHotel",
                 columns: table => new
                 {
-                    AdmHotelId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Sobrenome = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Senha = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Senha = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Tipo = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AdmHotel", x => x.AdmHotelId);
+                    table.PrimaryKey("PK_AdmHotel", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Hospede",
                 columns: table => new
                 {
-                    HospedeId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Sobrenome = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Senha = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Senha = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Tipo = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Hospede", x => x.HospedeId);
+                    table.PrimaryKey("PK_Hospede", x => x.UserId);
                 });
 
             migrationBuilder.CreateTable(
@@ -52,36 +54,16 @@ namespace HotelHub.Migrations
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Descricao = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Cidade = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AdministradorAdmHotelId = table.Column<int>(type: "int", nullable: false)
+                    AdministradorUserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Hotel", x => x.HotelId);
                     table.ForeignKey(
-                        name: "FK_Hotel_AdmHotel_AdministradorAdmHotelId",
-                        column: x => x.AdministradorAdmHotelId,
+                        name: "FK_Hotel_AdmHotel_AdministradorUserId",
+                        column: x => x.AdministradorUserId,
                         principalTable: "AdmHotel",
-                        principalColumn: "AdmHotelId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "FotoHotel",
-                columns: table => new
-                {
-                    FotoId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    NomeArquivo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HotelId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FotoHotel", x => x.FotoId);
-                    table.ForeignKey(
-                        name: "FK_FotoHotel_Hotel_HotelId",
-                        column: x => x.HotelId,
-                        principalTable: "Hotel",
-                        principalColumn: "HotelId",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -112,45 +94,48 @@ namespace HotelHub.Migrations
                 {
                     ComentarioId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Texto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HospedeId = table.Column<int>(type: "int", nullable: false),
-                    QuartoId = table.Column<int>(type: "int", nullable: false)
+                    Texto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    HospedeUserId = table.Column<int>(type: "int", nullable: true),
+                    QuartoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Comentario", x => x.ComentarioId);
                     table.ForeignKey(
-                        name: "FK_Comentario_Hospede_HospedeId",
-                        column: x => x.HospedeId,
+                        name: "FK_Comentario_Hospede_HospedeUserId",
+                        column: x => x.HospedeUserId,
                         principalTable: "Hospede",
-                        principalColumn: "HospedeId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "UserId");
                     table.ForeignKey(
                         name: "FK_Comentario_Quarto_QuartoId",
                         column: x => x.QuartoId,
                         principalTable: "Quarto",
-                        principalColumn: "QuartoId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "QuartoId");
                 });
 
             migrationBuilder.CreateTable(
-                name: "FotoQuarto",
+                name: "Fotos",
                 columns: table => new
                 {
                     FotoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NomeArquivo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    QuartoId = table.Column<int>(type: "int", nullable: false)
+                    HotelId = table.Column<int>(type: "int", nullable: true),
+                    QuartoId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FotoQuarto", x => x.FotoId);
+                    table.PrimaryKey("PK_Fotos", x => x.FotoId);
                     table.ForeignKey(
-                        name: "FK_FotoQuarto_Quarto_QuartoId",
+                        name: "FK_Fotos_Hotel_HotelId",
+                        column: x => x.HotelId,
+                        principalTable: "Hotel",
+                        principalColumn: "HotelId");
+                    table.ForeignKey(
+                        name: "FK_Fotos_Quarto_QuartoId",
                         column: x => x.QuartoId,
                         principalTable: "Quarto",
-                        principalColumn: "QuartoId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "QuartoId");
                 });
 
             migrationBuilder.CreateTable(
@@ -162,7 +147,7 @@ namespace HotelHub.Migrations
                     DataEntrada = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataSaida = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Observacao = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HospedeId = table.Column<int>(type: "int", nullable: false),
+                    HospedeUserId = table.Column<int>(type: "int", nullable: false),
                     QuartoId = table.Column<int>(type: "int", nullable: false),
                     HotelId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -170,29 +155,28 @@ namespace HotelHub.Migrations
                 {
                     table.PrimaryKey("PK_Reserva", x => x.ReservaId);
                     table.ForeignKey(
-                        name: "FK_Reserva_Hospede_HospedeId",
-                        column: x => x.HospedeId,
+                        name: "FK_Reserva_Hospede_HospedeUserId",
+                        column: x => x.HospedeUserId,
                         principalTable: "Hospede",
-                        principalColumn: "HospedeId",
+                        principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reserva_Hotel_HotelId",
                         column: x => x.HotelId,
                         principalTable: "Hotel",
                         principalColumn: "HotelId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reserva_Quarto_QuartoId",
                         column: x => x.QuartoId,
                         principalTable: "Quarto",
-                        principalColumn: "QuartoId",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "QuartoId");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comentario_HospedeId",
+                name: "IX_Comentario_HospedeUserId",
                 table: "Comentario",
-                column: "HospedeId");
+                column: "HospedeUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comentario_QuartoId",
@@ -200,19 +184,19 @@ namespace HotelHub.Migrations
                 column: "QuartoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FotoHotel_HotelId",
-                table: "FotoHotel",
+                name: "IX_Fotos_HotelId",
+                table: "Fotos",
                 column: "HotelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FotoQuarto_QuartoId",
-                table: "FotoQuarto",
+                name: "IX_Fotos_QuartoId",
+                table: "Fotos",
                 column: "QuartoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Hotel_AdministradorAdmHotelId",
+                name: "IX_Hotel_AdministradorUserId",
                 table: "Hotel",
-                column: "AdministradorAdmHotelId");
+                column: "AdministradorUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Quarto_HotelId",
@@ -220,9 +204,9 @@ namespace HotelHub.Migrations
                 column: "HotelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reserva_HospedeId",
+                name: "IX_Reserva_HospedeUserId",
                 table: "Reserva",
-                column: "HospedeId");
+                column: "HospedeUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reserva_HotelId",
@@ -242,10 +226,7 @@ namespace HotelHub.Migrations
                 name: "Comentario");
 
             migrationBuilder.DropTable(
-                name: "FotoHotel");
-
-            migrationBuilder.DropTable(
-                name: "FotoQuarto");
+                name: "Fotos");
 
             migrationBuilder.DropTable(
                 name: "Reserva");

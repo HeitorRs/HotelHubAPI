@@ -5,60 +5,60 @@ using Intuit.Ipp.Data;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace APITeste {
-    [TestClass]
-    public class HotelsControllerTest {
+//namespace APITeste {
+//    [TestClass]
+//    public class HotelsControllerTest {
 
-        [TestMethod]
-        public void TestarPegarHoteis() {
+//        [TestMethod]
+//        public void TestarPegarHoteis() {
 
-            // Arrange
-            var mockHotelService = new Mock<HotelService>();
+//            // Arrange
+//            var mockHotelService = new Mock<HotelService>();
 
-            // Simulando uma lista de hotéis
-            var expectedHotels = new List<Hotel>
-            {
-            new Hotel { HotelId = 1, Nome = "Hotel A", Descricao = "Descrição do Hotel A", Cidade = "Cidade A" },
-            new Hotel { HotelId = 2, Nome = "Hotel B", Descricao = "Descrição do Hotel B", Cidade = "Cidade B" },
-            // Adicione mais hotéis conforme necessário para o teste
-        };
+//            // Simulando uma lista de hotéis
+//            var expectedHotels = new List<Hotel>
+//            {
+//            new Hotel { HotelId = 1, Nome = "Hotel A", Descricao = "Descrição do Hotel A", Cidade = "Cidade A" },
+//            new Hotel { HotelId = 2, Nome = "Hotel B", Descricao = "Descrição do Hotel B", Cidade = "Cidade B" },
+//            // Adicione mais hotéis conforme necessário para o teste
+//        };
 
-            // Definindo o comportamento esperado do serviço ao chamar o método GetAllHotels
-            mockHotelService.Setup(service => service.GetAllHotels()).Returns(expectedHotels);
+//            // Definindo o comportamento esperado do serviço ao chamar o método GetAllHotels
+//            mockHotelService.Setup(service => service.GetAllHotels()).Returns(expectedHotels);
 
-            var hotelController = new HotelsController(mockHotelService.Object);
+//            var hotelController = new HotelsController(mockHotelService.Object);
 
-            // Act
-            var result = hotelController.GetHoteis();
+//            // Act
+//            var result = hotelController.GetHoteis();
 
-            // Assert
-            Assert.IsNotNull(result);
-            var okResult = result as OkObjectResult;
-            Assert.IsNotNull(okResult);
+//            // Assert
+//            Assert.IsNotNull(result);
+//            var okResult = result as OkObjectResult;
+//            Assert.IsNotNull(okResult);
 
-            var hotels = okResult.Value as IEnumerable<Hotel>;
-            Assert.IsNotNull(hotels);
-        }
+//            var hotels = okResult.Value as IEnumerable<Hotel>;
+//            Assert.IsNotNull(hotels);
+//        }
 
-        [TestMethod]
-        public void TestarPegarHotelPerId() {
+//        [TestMethod]
+//        public void TestarPegarHotelPerId() {
 
-            int hotelId = 1;
-            var expectedHotel = new Hotel { HotelId = hotelId, Nome = "Hotel A", Descricao = "Descrição do Hotel A", Cidade = "Cidade A" };
-            var mockHotelService = new Mock<HotelService>();
-            mockHotelService.Setup(service => service.GetHotelPerId(hotelId)).Returns(expectedHotel);
-            var hotelController = new HotelsController(mockHotelService.Object);
+//            int hotelId = 1;
+//            var expectedHotel = new Hotel { HotelId = hotelId, Nome = "Hotel A", Descricao = "Descrição do Hotel A", Cidade = "Cidade A" };
+//            var mockHotelService = new Mock<HotelService>();
+//            mockHotelService.Setup(service => service.GetHotelPerId(hotelId)).Returns(expectedHotel);
+//            var hotelController = new HotelsController(mockHotelService.Object);
 
 
-            var result = hotelController.GetHotel(hotelId);
+//            var result = hotelController.GetHotel(hotelId);
 
-            Assert.IsNotNull(result);
-            var okResult = result as OkObjectResult;
-            Assert.IsNotNull(okResult);
-            var hotel = okResult.Value as Hotel;
-            Assert.IsNotNull(hotel);
-            Assert.AreEqual(expectedHotel.HotelId, hotel.HotelId);
-        }
-    }
+//            Assert.IsNotNull(result);
+//            var okResult = result as OkObjectResult;
+//            Assert.IsNotNull(okResult);
+//            var hotel = okResult.Value as Hotel;
+//            Assert.IsNotNull(hotel);
+//            Assert.AreEqual(expectedHotel.HotelId, hotel.HotelId);
+//        }
+//    }
     
-}
+//}

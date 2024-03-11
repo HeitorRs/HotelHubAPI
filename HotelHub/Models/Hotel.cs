@@ -15,8 +15,11 @@ namespace HotelHub.Models {
         public string Cidade { get; set; }
 
         public ICollection<Quarto> Quartos { get; set; } = new List<Quarto>();
+
         public ICollection<Reserva> Reservas { get; set; } = new List<Reserva>();
+
         public AdmHotel Administrador { get; set; }
-        public ICollection<FotoHotel> FotosHotel { get; set; }
+
+        public ICollection<Foto> FotosHotel { get; set; }
     }
 }
