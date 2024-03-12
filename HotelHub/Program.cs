@@ -17,6 +17,7 @@ namespace HotelHub {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("HotelHubContext") ?? throw new InvalidOperationException("Connection string 'HotelHubContext' not found.")));
 
             builder.Services.AddScoped<TokenService>();
+            builder.Services.AddScoped<HotelService>();
 
             builder.Services.AddCors(options => {
                 options.AddPolicy("AllowReactApp",

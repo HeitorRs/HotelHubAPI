@@ -80,7 +80,7 @@ namespace HotelHub.Migrations
                     b.ToTable("Comentario");
                 });
 
-            modelBuilder.Entity("HotelHub.Models.Foto", b =>
+            modelBuilder.Entity("HotelHub.Models.FotoHotel", b =>
                 {
                     b.Property<int>("FotoId")
                         .ValueGeneratedOnAdd()
@@ -88,23 +88,40 @@ namespace HotelHub.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FotoId"));
 
-                    b.Property<int?>("HotelId")
+                    b.Property<int>("HotelId")
                         .HasColumnType("int");
 
                     b.Property<string>("NomeArquivo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("QuartoId")
-                        .HasColumnType("int");
-
                     b.HasKey("FotoId");
 
                     b.HasIndex("HotelId");
 
+                    b.ToTable("FotoHotel");
+                });
+
+            modelBuilder.Entity("HotelHub.Models.FotoQuarto", b =>
+                {
+                    b.Property<int>("FotoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FotoId"));
+
+                    b.Property<string>("NomeArquivo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("QuartoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FotoId");
+
                     b.HasIndex("QuartoId");
 
-                    b.ToTable("Fotos");
+                    b.ToTable("FotoQuarto");
                 });
 
             modelBuilder.Entity("HotelHub.Models.Hospede", b =>
@@ -247,15 +264,26 @@ namespace HotelHub.Migrations
                     b.Navigation("Quarto");
                 });
 
-            modelBuilder.Entity("HotelHub.Models.Foto", b =>
+            modelBuilder.Entity("HotelHub.Models.FotoHotel", b =>
                 {
-                    b.HasOne("HotelHub.Models.Hotel", null)
+                    b.HasOne("HotelHub.Models.Hotel", "Hotel")
                         .WithMany("FotosHotel")
-                        .HasForeignKey("HotelId");
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("HotelHub.Models.Quarto", null)
+                    b.Navigation("Hotel");
+                });
+
+            modelBuilder.Entity("HotelHub.Models.FotoQuarto", b =>
+                {
+                    b.HasOne("HotelHub.Models.Quarto", "Quarto")
                         .WithMany("FotosQuarto")
-                        .HasForeignKey("QuartoId");
+                        .HasForeignKey("QuartoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Quarto");
                 });
 
             modelBuilder.Entity("HotelHub.Models.Hotel", b =>

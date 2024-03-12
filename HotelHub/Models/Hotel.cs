@@ -20,6 +20,6 @@ namespace HotelHub.Models {
 
         public AdmHotel Administrador { get; set; }
 
-        public ICollection<Foto> FotosHotel { get; set; }
+        public ICollection<FotoHotel> FotosHotel { get; set; }
     }
 }

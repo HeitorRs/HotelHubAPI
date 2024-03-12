@@ -16,7 +16,7 @@ namespace HotelHub.Models {
 
         public Hotel Hotel { get; set; }
 
-        public ICollection<Foto> FotosQuarto { get; set; }
+        public ICollection<FotoQuarto> FotosQuarto { get; set; }
 
         public ICollection<Comentario> ComentariosQuarto { get; set; } = new List<Comentario>();
     }

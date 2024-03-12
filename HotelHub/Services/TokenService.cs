@@ -14,7 +14,7 @@ namespace HotelHub.Services {
             var tokenDescriptor = new SecurityTokenDescriptor {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Role, tipo),
+                    new Claim(ClaimTypes.Role, tipo.ToString()),
                     new Claim(ClaimTypes.NameIdentifier, id.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),

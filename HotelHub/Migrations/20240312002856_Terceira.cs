@@ -68,6 +68,26 @@ namespace HotelHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FotoHotel",
+                columns: table => new
+                {
+                    FotoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    HotelId = table.Column<int>(type: "int", nullable: false),
+                    NomeArquivo = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FotoHotel", x => x.FotoId);
+                    table.ForeignKey(
+                        name: "FK_FotoHotel_Hotel_HotelId",
+                        column: x => x.HotelId,
+                        principalTable: "Hotel",
+                        principalColumn: "HotelId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Quarto",
                 columns: table => new
                 {
@@ -114,28 +134,23 @@ namespace HotelHub.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Fotos",
+                name: "FotoQuarto",
                 columns: table => new
                 {
                     FotoId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    NomeArquivo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HotelId = table.Column<int>(type: "int", nullable: true),
-                    QuartoId = table.Column<int>(type: "int", nullable: true)
+                    QuartoId = table.Column<int>(type: "int", nullable: false),
+                    NomeArquivo = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Fotos", x => x.FotoId);
+                    table.PrimaryKey("PK_FotoQuarto", x => x.FotoId);
                     table.ForeignKey(
-                        name: "FK_Fotos_Hotel_HotelId",
-                        column: x => x.HotelId,
-                        principalTable: "Hotel",
-                        principalColumn: "HotelId");
-                    table.ForeignKey(
-                        name: "FK_Fotos_Quarto_QuartoId",
+                        name: "FK_FotoQuarto_Quarto_QuartoId",
                         column: x => x.QuartoId,
                         principalTable: "Quarto",
-                        principalColumn: "QuartoId");
+                        principalColumn: "QuartoId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -184,13 +199,13 @@ namespace HotelHub.Migrations
                 column: "QuartoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Fotos_HotelId",
-                table: "Fotos",
+                name: "IX_FotoHotel_HotelId",
+                table: "FotoHotel",
                 column: "HotelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Fotos_QuartoId",
-                table: "Fotos",
+                name: "IX_FotoQuarto_QuartoId",
+                table: "FotoQuarto",
                 column: "QuartoId");
 
             migrationBuilder.CreateIndex(
@@ -226,7 +241,10 @@ namespace HotelHub.Migrations
                 name: "Comentario");
 
             migrationBuilder.DropTable(
-                name: "Fotos");
+                name: "FotoHotel");
+
+            migrationBuilder.DropTable(
+                name: "FotoQuarto");
 
             migrationBuilder.DropTable(
                 name: "Reserva");

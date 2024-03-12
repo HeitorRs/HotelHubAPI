@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 namespace HotelHub.Models {
-    public class Foto {
+    public abstract class Foto {
+        [Key]
         public int FotoId { get; set; }
 
         [Required]

@@ -12,7 +12,9 @@ namespace HotelHub.Data
         public HotelHubContext(DbContextOptions<HotelHubContext> options)
             : base(options) {
         }
-        public DbSet<Foto> Fotos { get; set; }
+        public DbSet<FotoHotel> FotoHotel { get; set; } = default!;
+
+        public DbSet<FotoQuarto> FotoQuarto { get; set; } = default!;
 
         public DbSet<AdmHotel> AdmHotel { get; set; } = default!;
 

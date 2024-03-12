@@ -6,7 +6,7 @@ using HotelHub.Services;
 using static HotelHub.Services.TokenService;
 
 namespace HotelHub.Controllers {
-    [Route("cadastro")]
+    [Route("api")]
     [ApiController]
     public class UsuarioController : ControllerBase {
 
@@ -67,17 +67,17 @@ namespace HotelHub.Controllers {
 
         // POST: api/Hospedes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult> PostHospede(string nome, string sobrenome, string email, string senha, TipoUsuario tipo) {
+        [HttpPost("/user/cadastro")]
+        public async Task<ActionResult> PostHospede([FromBody] CadastroModel model) {
 
             try {
-                if (tipo.ToString() == "Hospede") {
+                if (model.Tipo.ToString() == "Hospede") {
                     var hospede = new Hospede {
-                        Nome = nome,
-                        Sobrenome = sobrenome,
-                        Email = email,
-                        Senha = senha,
-                        Tipo = tipo
+                        Nome = model.Nome,
+                        Sobrenome = model.Sobrenome,
+                        Email = model.Email,
+                        Senha = model.Senha,
+                        Tipo = model.Tipo
                     };
 
                     _context.Hospede.Add(hospede);
@@ -85,13 +85,13 @@ namespace HotelHub.Controllers {
                     var token = _tokenService.GenerateJwtToken(hospede.UserId, hospede.Tipo.ToString());
                     return Ok(token);
 
-                } else if (tipo.ToString() == "AdmHotel") {
+                } else if (model.Tipo.ToString() == "AdmHotel") {
                     var admhotel = new AdmHotel {
-                        Nome = nome,
-                        Sobrenome = sobrenome,
-                        Email = email,
-                        Senha = senha,
-                        Tipo = tipo
+                        Nome = model.Nome,
+                        Sobrenome = model.Sobrenome,
+                        Email = model.Email,
+                        Senha = model.Senha,
+                        Tipo = model.Tipo
                     };
                     _context.AdmHotel.Add(admhotel);
                     await _context.SaveChangesAsync();
@@ -124,5 +124,16 @@ namespace HotelHub.Controllers {
         //private bool HospedeExists(int id) {
         //    return (_context.Hospede?.Any(e => e.HospedeId == id)).GetValueOrDefault();
         //}
+    }
+    public class CadastroModel {
+        public string Nome { get; set; }
+
+        public string Sobrenome { get; set; }
+
+        public string Email { get; set; }
+
+        public string Senha { get; set; }
+
+        public TipoUsuario Tipo { get; set; }
     }
 }

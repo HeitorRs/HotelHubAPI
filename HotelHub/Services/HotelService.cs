@@ -1,79 +1,79 @@
-﻿//using HotelHub.Data;
-//using HotelHub.Models;
-//using Microsoft.AspNetCore.Mvc;
-//using Microsoft.EntityFrameworkCore;
+﻿using HotelHub.Data;
+using HotelHub.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-//namespace HotelHub.Services {
+namespace HotelHub.Services {
 
-//    public class HotelService {
+    public class HotelService {
 
-//        private readonly HotelHubContext _context;
+        private readonly HotelHubContext _context;
 
-//        public HotelService(HotelHubContext context) {
-//            _context = context;
-//        }
-//        public HotelService() {}
+        public HotelService(HotelHubContext context) {
+            _context = context;
+        }
+        public HotelService() { }
 
-//        public virtual List<Hotel> GetAllHotels() {
-//            return _context.Hotel.Include(h => h.FotosHotel).ToList();
-//        }
+        public virtual List<Hotel> GetAllHotels() {
+            return _context.Hotel.Include(h => h.FotosHotel).ToList();
+        }
 
-//        public virtual Hotel GetHotelPerId(int id) {
-//            return _context.Hotel.Include(h => h.FotosHotel).FirstOrDefault(h => h.HotelId == id);
-//        }
+        public virtual Hotel GetHotelPerId(int id) {
+            return _context.Hotel.Include(h => h.FotosHotel).FirstOrDefault(h => h.HotelId == id);
+        }
 
-//        public async Task<string>  DeleteHotel(int id) {
-//            var hotel = GetHotelPerId(id);
+        public async Task<string> DeleteHotel(int id) {
+            var hotel = GetHotelPerId(id);
 
-//            if (hotel == null) {
-//                return null;
-//            }
-            
-//            _context.Hotel.Remove(hotel);
-//            await _context.SaveChangesAsync();
+            if (hotel == null) {
+                return null;
+            }
 
-//            return "ok";
-//        }
+            _context.Hotel.Remove(hotel);
+            await _context.SaveChangesAsync();
 
-//        //public async Task<Hotel> PostHotel(string nome, string descricao, string cidade, string fotos, int admhotelId) {
+            return "ok";
+        }
 
-//        //    AdmHotel admhotel = GetAdmHotel(admhotelId);
+        public async Task<Hotel> PostHotel(int admHotel, string nome, string descricao, string cidade, string fotos) {
 
-//        //    List<FotoHotel> fotoshotel = TransformListFotosHotel(fotos);
+            AdmHotel admhotel = GetAdmHotel(admHotel);
 
-//        //    var hotel = new Hotel {
-//        //        Nome = nome,
-//        //        Descricao = descricao,
-//        //        Cidade = cidade,
-//        //        FotosHotel = fotoshotel,
-//        //        Administrador = admhotel
-//        //    };
+            List<FotoHotel> fotoshotel = TransformListFotosHotel(fotos);
 
-//        //    _context.Hotel.Add(hotel);
-//        //    await _context.SaveChangesAsync();
+            var hotel = new Hotel {
+                Nome = nome,
+                Descricao = descricao,
+                Cidade = cidade,
+                FotosHotel = fotoshotel,
+                Administrador = admhotel
+            };
 
-//        //    return hotel;
-//        //}
+            _context.Hotel.Add(hotel);
+            await _context.SaveChangesAsync();
 
-//        public virtual AdmHotel GetAdmHotel(int admhotelId) {
+            return hotel;
+        }
 
-//            AdmHotel admhotel = _context.AdmHotel.Find(admhotelId);
-//            if (admhotel == null) {
-//                return null;
-//            }
-//            return admhotel;
-//        }
+        public virtual AdmHotel GetAdmHotel(int admhotelId) {
 
-//        public virtual List<FotoHotel> TransformListFotosHotel(string fotos) {
+            AdmHotel admhotel = _context.AdmHotel.Find(admhotelId);
+            if (admhotel == null) {
+                return null;
+            }
+            return admhotel;
+        }
 
-//            var fotosList = fotos.Split(',').ToList();
+        public virtual List<FotoHotel> TransformListFotosHotel(string fotos) {
 
-//            var fotoshotel = new List<FotoHotel>();
-//            foreach (string foto in fotosList) {
-//                var newfoto = new FotoHotel { NomeArquivo = foto };
-//                fotoshotel.Add(newfoto);
-//            }
-//            return fotoshotel;
-//        }
-//    }
-//}
+            var fotosList = fotos.Split(',').ToList();
+
+            var fotoshotel = new List<FotoHotel>();
+            foreach (string foto in fotosList) {
+                var newfoto = new FotoHotel { NomeArquivo = foto };
+                fotoshotel.Add(newfoto);
+            }
+            return fotoshotel;
+        }
+    }
+}
