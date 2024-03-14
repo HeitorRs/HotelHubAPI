@@ -47,8 +47,8 @@ namespace HotelHub.Services {
                 Cidade = cidade,
                 FotosHotel = fotoshotel,
                 Administrador = admhotel
-            };
-
+            }
+;
             _context.Hotel.Add(hotel);
             await _context.SaveChangesAsync();
 

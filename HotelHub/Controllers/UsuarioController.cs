@@ -27,20 +27,23 @@ namespace HotelHub.Controllers {
         //    return await _context.Hospede.ToListAsync();
         //}
 
-        //// GET: api/Hospedes/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Hospede>> GetHospede(int id) {
-        //    if (_context.Hospede == null) {
-        //        return NotFound();
-        //    }
-        //    var hospede = await _context.Hospede.FindAsync(id);
+        // GET: api/Hospedes/5
+        [HttpGet("/user/{id}")]
+        public async Task<ActionResult> GetUserDetails(int id) {
 
-        //    if (hospede == null) {
-        //        return NotFound();
-        //    }
+            var hospede = await _context.Hospede.FindAsync(id);
+            if (hospede != null) {
+ 
+                return Ok(hospede);
+            }
 
-        //    return hospede;
-        //}
+            var admHotel = await _context.AdmHotel.FindAsync(id);
+            if (admHotel != null) {
+                return Ok(admHotel);
+            }
+
+            return NotFound();
+        }
 
         //// PUT: api/Hospedes/5
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -83,7 +86,7 @@ namespace HotelHub.Controllers {
                     _context.Hospede.Add(hospede);
                     await _context.SaveChangesAsync();
                     var token = _tokenService.GenerateJwtToken(hospede.UserId, hospede.Tipo.ToString());
-                    return Ok(token);
+                    return Ok(new { Token = token });
 
                 } else if (model.Tipo.ToString() == "AdmHotel") {
                     var admhotel = new AdmHotel {
@@ -96,7 +99,7 @@ namespace HotelHub.Controllers {
                     _context.AdmHotel.Add(admhotel);
                     await _context.SaveChangesAsync();
                     var token = _tokenService.GenerateJwtToken(admhotel.UserId, admhotel.Tipo.ToString());
-                    return Ok(token);
+                    return Ok(new { Token = token });
                 }
             } catch (Exception ex) {
                 return StatusCode(500, $"Erro ao cadastrar hospede: {ex.Message}");
