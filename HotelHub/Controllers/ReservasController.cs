@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HotelHub.Data;
 using HotelHub.Models;
+using System.Globalization;
 
 namespace HotelHub.Controllers
 {
@@ -33,12 +34,12 @@ namespace HotelHub.Controllers
         }
 
         // GET: api/Reservas/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Reserva>> GetReserva(int id)
+        [HttpGet("/reservas/hospede/{id}")]
+        public async Task<ActionResult<List<Reserva>>> GetReserva(int id)
         {
             try {
-                Reserva reserva = await _context.Reserva.Include(r => r.Hotel).ThenInclude(r => r.Quartos).Include(r => r.Hospede).FirstOrDefaultAsync(r => r.ReservaId == id);
-                return reserva;
+                List<Reserva> reservas = await _context.Reserva.Include(r => r.Hotel).ThenInclude(r => r.Quartos).Where(r => r.Hospede.UserId == id).ToListAsync();
+                return reservas;
 
             } catch (Exception ex) {
                 return BadRequest(ex.Message);
@@ -76,15 +77,41 @@ namespace HotelHub.Controllers
             return NoContent();
         }
 
+        [HttpGet("/reservas/quarto/{quartoId}")]
+        public async Task<ActionResult<List<ReservaDataModel>>> GetReservasPorQuarto(int quartoId) {
+            var datasreservadas = new List<ReservaDataModel>();
+            try {
+                var reservas = await _context.Reserva.Where(r => r.Quarto.QuartoId == quartoId).ToListAsync();
+                foreach(var reserva in reservas) {
+                    var datareservada = new ReservaDataModel {
+                        DataEntrada = reserva.DataEntrada.ToString("yyyy-MM-dd"),
+                        DataSaida = reserva.DataSaida.ToString("yyyy-MM-dd")
+                    };
+                    datasreservadas.Add(datareservada);
+                }
+                return Ok(datasreservadas);
+            } catch (Exception ex) {
+                return StatusCode(500, $"Erro ao buscar reservas: {ex.Message}");
+            }
+        }
+
+        public class ReservaDataModel {
+            public string DataEntrada { get; set; }
+            public string DataSaida { get; set; }
+        }
+
         // POST: api/Reservas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Reserva>> PostReserva(DateTime dataentrada, DateTime datasaida, string observacao, int quartoId, int hotelId, int hospedeId)
+        [HttpPost("/Reservar")]
+        public async Task<ActionResult<Reserva>> PostReserva([FromBody] ReservaModel model)
         {
             try {
-                Hospede hospede = _context.Hospede.Find(hospedeId);
-                Quarto quarto = _context.Quarto.Find(hospedeId);
-                Hotel hotel = _context.Hotel.Find(hotelId);
+                DateTime dataEntrada = DateTime.ParseExact(model.dataentrada, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+                DateTime dataSaida = DateTime.ParseExact(model.datasaida, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture);
+
+                Hospede hospede = _context.Hospede.Find(model.hospedeid);
+                Quarto quarto = _context.Quarto.Find(model.quartoid);
+                Hotel hotel = _context.Hotel.Find(model.hotelid);
 
                 if (hotel == null ){
                     return NotFound("Hotel não encontrado.");
@@ -94,9 +121,9 @@ namespace HotelHub.Controllers
                     return NotFound("Hospede não encontrado");
                 }
                 var reserva = new Reserva {
-                    DataEntrada = dataentrada,
-                    DataSaida = datasaida,
-                    Observacao = observacao,
+                    DataEntrada = dataEntrada,
+                    DataSaida = dataSaida,
+                    Observacao = model.observacao,
                     Hotel = hotel,
                     Quarto = quarto,
                     Hospede= hospede
@@ -134,6 +161,15 @@ namespace HotelHub.Controllers
         private bool ReservaExists(int id)
         {
             return (_context.Reserva?.Any(e => e.ReservaId == id)).GetValueOrDefault();
+        }
+
+        public class ReservaModel {
+            public string dataentrada { get; set; }
+            public string datasaida { get; set; }
+            public string observacao { get; set; }
+            public int hotelid { get; set; }
+            public int quartoid { get; set; }
+            public int hospedeid { get; set; }
         }
     }
 }
