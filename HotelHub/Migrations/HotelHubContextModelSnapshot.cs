@@ -238,6 +238,9 @@ namespace HotelHub.Migrations
                     b.Property<int>("QuartoId")
                         .HasColumnType("int");
 
+                    b.Property<float>("ValorTotal")
+                        .HasColumnType("real");
+
                     b.HasKey("ReservaId");
 
                     b.HasIndex("HospedeUserId");

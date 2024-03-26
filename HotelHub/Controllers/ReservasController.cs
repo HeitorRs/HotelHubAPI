@@ -34,8 +34,20 @@ namespace HotelHub.Controllers
         }
 
         // GET: api/Reservas/5
+        [HttpGet("/reservas/{id}")]
+        public async Task<ActionResult<Reserva>> GetReserva(int id) {
+            try {
+                Reserva  reserva =  _context.Reserva.Include(r => r.Hotel).ThenInclude(r => r.Quartos).FirstOrDefault(r => r.ReservaId == id);
+                return reserva;
+
+            } catch (Exception ex) {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // GET: api/Reservas/5
         [HttpGet("/reservas/hospede/{id}")]
-        public async Task<ActionResult<List<Reserva>>> GetReserva(int id)
+        public async Task<ActionResult<List<Reserva>>> GetReservasHospede(int id)
         {
             try {
                 List<Reserva> reservas = await _context.Reserva.Include(r => r.Hotel).ThenInclude(r => r.Quartos).Where(r => r.Hospede.UserId == id).ToListAsync();
@@ -113,33 +125,36 @@ namespace HotelHub.Controllers
                 Quarto quarto = _context.Quarto.Find(model.quartoid);
                 Hotel hotel = _context.Hotel.Find(model.hotelid);
 
-                if (hotel == null ){
+                if (hotel == null) {
                     return NotFound("Hotel não encontrado.");
-                }else if(quarto == null) {
-                    return NotFound("Quarto não encontrado."); 
-                }else if(hospede == null) {
+                } else if (quarto == null) {
+                    return NotFound("Quarto não encontrado.");
+                } else if (hospede == null) {
                     return NotFound("Hospede não encontrado");
                 }
+
                 var reserva = new Reserva {
                     DataEntrada = dataEntrada,
                     DataSaida = dataSaida,
                     Observacao = model.observacao,
                     Hotel = hotel,
                     Quarto = quarto,
-                    Hospede= hospede
+                    Hospede = hospede
                 };
+
+                reserva.CalcularValorTotal();
 
                 _context.Reserva.Add(reserva);
                 await _context.SaveChangesAsync();
-                return Ok("Reserva feita com sucesso!");
 
+                return Ok("Reserva feita com sucesso!");
             } catch (Exception ex) {
                 return StatusCode(500, $"Erro fazer reserva: {ex.Message}");
             }
         }
 
         // DELETE: api/Reservas/5
-        [HttpDelete("{id}")]
+        [HttpDelete("/Reserva/Delete/{id}")]
         public async Task<IActionResult> DeleteReserva(int id)
         {
             if (_context.Reserva == null)

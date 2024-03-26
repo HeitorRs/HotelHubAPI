@@ -1,5 +1,7 @@
-﻿using HotelHub.Data;
+﻿using HotelHub.Controllers;
+using HotelHub.Data;
 using HotelHub.Models;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,10 +24,15 @@ namespace HotelHub.Services {
             return _context.Hotel.Include(h => h.FotosHotel).FirstOrDefault(h => h.HotelId == id);
         }
 
-        public async Task<string> DeleteHotel(int id) {
-            var hotel = GetHotelPerId(id);
-
+        public virtual async Task<string> DeleteHotel(int id) {
+            var hotel = await _context.Hotel.FindAsync(id);
             if (hotel == null) {
+                return null; 
+            }
+
+            bool existeReserva = await verificarReserva(id);
+
+            if (existeReserva == true) {
                 return null;
             }
 
@@ -35,7 +42,7 @@ namespace HotelHub.Services {
             return "ok";
         }
 
-        public async Task<Hotel> PostHotel(int admHotel, string nome, string descricao, string cidade, string fotos) {
+        public virtual async Task<Hotel> PostHotel(int admHotel, string nome, string descricao, string cidade, string fotos) {
 
             AdmHotel admhotel = GetAdmHotel(admHotel);
 
@@ -74,6 +81,14 @@ namespace HotelHub.Services {
                 fotoshotel.Add(newfoto);
             }
             return fotoshotel;
+        }
+
+        public async virtual Task<bool> verificarReserva(int id) {
+            List<Reserva> reservas = await _context.Reserva.Include(r => r.Hotel).Where(r => r.Hotel.HotelId == id).ToListAsync();
+            if (reservas.Count() > 0) {
+                return true;
+            }
+            return false;
         }
     }
 }

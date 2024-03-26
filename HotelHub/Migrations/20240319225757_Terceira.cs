@@ -162,6 +162,7 @@ namespace HotelHub.Migrations
                     DataEntrada = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DataSaida = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Observacao = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ValorTotal = table.Column<float>(type: "real", nullable: false),
                     HospedeUserId = table.Column<int>(type: "int", nullable: false),
                     QuartoId = table.Column<int>(type: "int", nullable: false),
                     HotelId = table.Column<int>(type: "int", nullable: false)

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelHub.Migrations
 {
     [DbContext(typeof(HotelHubContext))]
-    [Migration("20240312002856_Terceira")]
+    [Migration("20240319225757_Terceira")]
     partial class Terceira
     {
         /// <inheritdoc />
@@ -240,6 +240,9 @@ namespace HotelHub.Migrations
 
                     b.Property<int>("QuartoId")
                         .HasColumnType("int");
+
+                    b.Property<float>("ValorTotal")
+                        .HasColumnType("real");
 
                     b.HasKey("ReservaId");
 

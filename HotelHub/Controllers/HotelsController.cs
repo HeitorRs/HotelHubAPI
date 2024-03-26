@@ -84,21 +84,19 @@ namespace HotelHub.Controllers {
             }
         }
 
-        //// DELETE: api/Hotels/5
-        //[HttpDelete("/api/Hotels/delete/{id}")]
-        //public async Task<IActionResult> DeleteHotel(int id) {
-        //    if (_context.Hotel == null) {
-        //        return NotFound();
-        //    }
+        // DELETE: api/Hotels/5
+        [HttpDelete("/api/Hotels/delete/{id}")]
+        public async Task<IActionResult> DeleteHotel(int id) {
+            if (_context.Hotel == null) {
+                return NotFound();
+            }
+            var result = await _hotelService.DeleteHotel(id);
+            if (result == null) {
+                return BadRequest();
+            };
 
-        //    await _hotelService.DeleteHotel(id);
-
-        //    return NoContent();
-        //}
-
-        //private bool HotelExists(int id) {
-        //    return (_context.Hotel?.Any(e => e.HotelId == id)).GetValueOrDefault();
-        //}
+            return NoContent();
+        }
     }
     public class postmodel {
         public int admHotelId { get; set; }

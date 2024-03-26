@@ -34,5 +34,6 @@ namespace HotelHub.Data
                 .WithMany(q => q.Reservas)
                 .OnDelete(DeleteBehavior.NoAction);
         }
+        public HotelHubContext() {}
     }
 }
