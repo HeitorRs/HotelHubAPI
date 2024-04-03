@@ -24,34 +24,34 @@ namespace HotelHub.Services {
             return _context.Hotel.Include(h => h.FotosHotel).FirstOrDefault(h => h.HotelId == id);
         }
 
-        public virtual async Task<string> DeleteHotel(int id) {
+        public virtual async Task<bool> DeleteHotel(int id) {
             var hotel = await _context.Hotel.FindAsync(id);
             if (hotel == null) {
-                return null; 
+                return false; 
             }
 
             bool existeReserva = await verificarReserva(id);
 
             if (existeReserva == true) {
-                return null;
+                return false;
             }
 
             _context.Hotel.Remove(hotel);
             await _context.SaveChangesAsync();
 
-            return "ok";
+            return true;
         }
 
-        public virtual async Task<Hotel> PostHotel(int admHotel, string nome, string descricao, string cidade, string fotos) {
+        public virtual async Task<Hotel> PostHotel(PostModelHotel model) {
 
-            AdmHotel admhotel = GetAdmHotel(admHotel);
+            AdmHotel admhotel = GetAdmHotel(model.admHotelId);
 
-            List<FotoHotel> fotoshotel = TransformListFotosHotel(fotos);
+            List<FotoHotel> fotoshotel = TransformListFotosHotel(model.fotos);
 
             var hotel = new Hotel {
-                Nome = nome,
-                Descricao = descricao,
-                Cidade = cidade,
+                Nome = model.nome,
+                Descricao = model.descricao,
+                Cidade = model.cidade,
                 FotosHotel = fotoshotel,
                 Administrador = admhotel
             }
@@ -89,6 +89,39 @@ namespace HotelHub.Services {
                 return true;
             }
             return false;
+        }
+
+        public async Task<bool> PutHotel(PutModelHotel model) {
+            try {
+                var hotel = _context.Hotel.FirstOrDefault(h => h.HotelId == model.hotelId);
+                hotel.Nome = model.nome;
+                hotel.Cidade = model.cidade;
+                hotel.Descricao = model.descricao;
+
+                _context.Hotel.Update(hotel);
+                await _context.SaveChangesAsync();
+            } catch (Exception ex) {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                throw;
+            }
+            return true;
+        }
+        private bool HotelExists(int id) {
+            return _context.Hotel.Any(e => e.HotelId == id);
+        }
+
+        public class PutModelHotel {
+            public int hotelId { get; set; }
+            public string nome { get; set; }
+            public string cidade { get; set; }
+            public string descricao { get; set; }
+        }
+        public class PostModelHotel {
+            public int admHotelId { get; set; }
+            public string nome { get; set; }
+            public string descricao { get; set; }
+            public string cidade { get; set; }
+            public string fotos { get; set; }
         }
     }
 }

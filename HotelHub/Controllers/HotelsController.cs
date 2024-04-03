@@ -9,21 +9,20 @@ using HotelHub.Data;
 using HotelHub.Models;
 using HotelHub.Services;
 using Microsoft.AspNetCore.Authorization;
+using static HotelHub.Services.HotelService;
 
 namespace HotelHub.Controllers {
     [Route("api/[controller]")]
     [ApiController]
     public class HotelsController : ControllerBase {
         private readonly HotelService _hotelService;
-        private readonly HotelHubContext _context;
 
 
-        public HotelsController(HotelService hotelService, HotelHubContext context) {
+        public HotelsController(HotelService hotelService) {
             _hotelService = hotelService;
-            _context = context;
         }
 
-        // GET: api/Hotels
+        // GET
         [HttpGet]
         public IActionResult GetHoteis() {
             try {
@@ -35,8 +34,7 @@ namespace HotelHub.Controllers {
 
         }
 
-        // GET: api/Hotels/5 [Authorize(Roles ="admHotel")]
-        [Authorize]
+        // GET por id
         [HttpGet("{id}")]
         public IActionResult GetHotel(int id) {
             try {
@@ -47,62 +45,39 @@ namespace HotelHub.Controllers {
             }
         }
 
+        // PUT
+        [HttpPut("{id}")]
+        [Authorize(Roles = "AdmHotel")]
+        public async Task<IActionResult> PutHotel(PutModelHotel model) {
 
-        //// PUT: api/Hotels/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutHotel(int id, Hotel hotel) {
-        //    if (id != hotel.HotelId) {
-        //        return BadRequest();
-        //    }
+            var result = await _hotelService.PutHotel(model);
+            if (result == true) {
+                return Ok();
+            }
+            return BadRequest();
+        }
 
-        //    _context.Entry(hotel).State = EntityState.Modified;
-
-        //    try {
-        //        await _context.SaveChangesAsync();
-        //    } catch (DbUpdateConcurrencyException) {
-        //        if (!HotelExists(id)) {
-        //            return NotFound();
-        //        } else {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
-
-        // POST: api/Hotels
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // POST
         [Authorize(Roles = "AdmHotel")]
         [HttpPost]
-        public async Task<ActionResult<Hotel>> PostHotel(postmodel model) {
+        public async Task<ActionResult<Hotel>> PostHotel(PostModelHotel model) {
             try {
-                await _hotelService.PostHotel(model.admHotelId, model.nome, model.descricao, model.cidade, model.fotos);
+                await _hotelService.PostHotel(model);
                 return Ok();
             } catch (Exception ex) {
                 return StatusCode(500, $"Erro ao cadastrar o hotel: {ex.Message}");
             }
         }
 
-        // DELETE: api/Hotels/5
+        // DELETE
+        [Authorize(Roles = "AdmHotel")]
         [HttpDelete("/api/Hotels/delete/{id}")]
         public async Task<IActionResult> DeleteHotel(int id) {
-            if (_context.Hotel == null) {
-                return NotFound();
-            }
             var result = await _hotelService.DeleteHotel(id);
-            if (result == null) {
+            if (result == false) {
                 return BadRequest();
             };
-
             return NoContent();
         }
-    }
-    public class postmodel {
-        public int admHotelId { get; set; }
-        public string nome { get; set; }
-        public string descricao { get; set; }
-        public string cidade { get; set; }
-        public string fotos { get; set; }
-    }
+    } 
 }

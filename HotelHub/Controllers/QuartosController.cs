@@ -11,124 +11,78 @@ using System.Drawing;
 using FluentAssertions.Equivalency;
 using HotelHub.Services;
 using Microsoft.AspNetCore.Authorization;
+using static HotelHub.Services.QuartoService;
 
 namespace HotelHub.Controllers {
     [Route("api")]
     [ApiController]
     public class QuartosController : ControllerBase {
-        private readonly HotelHubContext _context;
         private readonly QuartoService _quartoService;
 
-        public QuartosController(HotelHubContext context, QuartoService quartoService) {
-            _context = context;
+        public QuartosController(QuartoService quartoService) {
             _quartoService = quartoService;
         }
 
-        // GET: api/Quartos
+        // GET
         [HttpGet("/quartos/{hotelId}")]
         public async Task<ActionResult<IEnumerable<Quarto>>> GetQuartosDoHotel(int hotelId) {
-            List<Quarto> quartosDoHotel =  _context.Quarto.Include(q => q.FotosQuarto).Where(q => q.Hotel.HotelId == hotelId).ToList();
+            var result = await _quartoService.GetQuartos(hotelId);
 
-            if (quartosDoHotel == null || quartosDoHotel.Count == 0) {
+            if (result == null) {
                 return NotFound("Nenhum quarto encontrado para este hotel.");
             }
-
-            return quartosDoHotel;
+            return Ok(result);
         }
 
-        // GET: api/Quartos/5
+        // GET quarto
         [HttpGet("/quartos/detalhes/{id}")]
         public async Task<ActionResult<Quarto>> GetQuarto(int id) {
-            try {
-                var quarto = _context.Quarto.Include(q => q.FotosQuarto).FirstOrDefault(q => q.QuartoId == id);
-
-                if (quarto == null) {
-                    return NotFound("Hotel não encontrado.");
-                }
-
-                return quarto;
-
-            } catch (Exception ex) {
-                return StatusCode(500, $"Erro ao buscar os quartos do hotel: {ex.Message}");
+            var result = await _quartoService.GetQuarto(id);
+            if(result == null) {
+                return NotFound();
             }
+            return Ok(result);
         }
+
+        // GET detalhes do quarto
         [HttpGet("quarto/{id}")]
         public async Task<ActionResult<Quarto>> DetalheQuarto(int id) {
-            try {
-                var quarto = _context.Quarto.Include(q => q.FotosQuarto).FirstOrDefault(q => q.QuartoId == id);
-
-                if (quarto == null) {
-                    return NotFound("Quarto não encontrado.");
-                }
-
-                return quarto;
-
-            } catch (Exception ex) {
-                return StatusCode(500, $"Erro ao buscar os quartos do hotel: {ex.Message}");
+            var result = await _quartoService.GetDetalheQuarto(id);
+            if (result == null) {
+                return NotFound();
             }
+            return Ok(result);
         }
 
-        // PUT: api/Quartos/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutQuarto(int id, Quarto quarto) {
-            if (id != quarto.QuartoId) {
-                return BadRequest();
+        // PUT
+        [HttpPut("/quarto/edit/{id}")]
+        public async Task<IActionResult> PutQuarto(PutModelQuarto model) {
+            var result = await _quartoService.PutQuarto(model);
+            if (result == false) {
+                return NotFound();
             }
-
-            _context.Entry(quarto).State = EntityState.Modified;
-
-            try {
-                await _context.SaveChangesAsync();
-            } catch (DbUpdateConcurrencyException) {
-                if (!QuartoExists(id)) {
-                    return NotFound();
-                } else {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(result);
         }
 
-        // POST: api/Quartos
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // POST
         [HttpPost("/Quarto/Cadastro")]
         public async Task<ActionResult<Quarto>> PostQuarto([FromBody] ModelQuarto model) {
             try {
-                await _quartoService.PostQuarto(model.hotelId, model.descricao, model.preco, model.fotos);
+                await _quartoService.PostQuarto(model);
                 return Ok();
             } catch (Exception ex) {
                 return StatusCode(500, $"Erro ao cadastrar o hotel: {ex.Message}");
             }
         }
 
-        // DELETE: api/Quartos/5
+        // DELETE
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteQuarto(int id) {
-            if (_context.Quarto == null) {
-                return NotFound();
+            var result = await _quartoService.DeleteQuarto(id);
+            if(result == false) {
+                return StatusCode(500, $"Erro ao deletar o hotel");
             }
-            var quarto = await _context.Quarto.FindAsync(id);
-            if (quarto == null) {
-                return NotFound();
-            }
-
-            _context.Quarto.Remove(quarto);
-            await _context.SaveChangesAsync();
-
             return NoContent();
-        }
-
-        private bool QuartoExists(int id) {
-            return (_context.Quarto?.Any(e => e.QuartoId == id)).GetValueOrDefault();
-        }
-
-        public class ModelQuarto {
-            public int hotelId { get; set; }
-            public string descricao { get; set; }
-            public float preco { get; set; }
-            public string fotos { get; set; }
         }
     }
 }

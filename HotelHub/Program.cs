@@ -19,6 +19,8 @@ namespace HotelHub {
             builder.Services.AddScoped<TokenService>();
             builder.Services.AddScoped<HotelService>();
             builder.Services.AddScoped<QuartoService>();
+            builder.Services.AddScoped<UsuarioService>();
+            builder.Services.AddScoped<ReservaService>();
 
             builder.Services.AddCors(options => {
                 options.AddPolicy("AllowReactApp",
